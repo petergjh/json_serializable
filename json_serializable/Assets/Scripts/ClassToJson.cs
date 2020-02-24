@@ -11,15 +11,14 @@ using LitJson;
 
 public class ClassToJson : MonoBehaviour
 {
-
+ 
     private object myPet;
-
-    // Start is called before the first frame update
+ 
+     // Start is called before the first frame update
     void Start()
     {
         myPet = JsonMapper.ToJson(new Pet());
-        Debug.Log(""myPet);
-
+        Debug.Log("将Pet 转存为Json格式存到myPet");
     }
 }
 

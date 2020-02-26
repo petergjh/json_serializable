@@ -12,4 +12,5 @@ public class Data
 {
     public int level;
     public int money;
+    public List<Item> bagitems = new List<Item>();
 }

@@ -17,7 +17,9 @@ public class Test2 : MonoBehaviour
 {
     Data data = new Data();
     public Text[] Name;
+    public Text itemtext;
     public Button[] Up;
+
 
     void Init()
     {
@@ -26,12 +28,28 @@ public class Test2 : MonoBehaviour
 
         Up[0].onClick.AddListener(() => { data.level++; });
         Up[1].onClick.AddListener(() => { data.money++; });
+
+        string itemname = "";
+        foreach (var item in data.bagitems)
+        {
+            itemname += item.name + " ";
+        }
+        itemtext.text = itemname;
+
     }
 
     private void Update()
     {
         Name[0].text = "等级: " + data.level.ToString();
         Name[1].text = "金币: " + data.money.ToString();
+
+        string itemname = "";
+        foreach (var item in data.bagitems)
+        {
+            itemname += item.name + " ";
+        }
+        itemtext.text = itemname;
+
     }
 
     // Start is called before the first frame update
@@ -40,6 +58,10 @@ public class Test2 : MonoBehaviour
         Init();
     }
 
+    public void GetItem()
+    {
+        data.bagitems.Add(new Item("长剑", Type.Weapon));
+    }
     // 数据存档
     public void SaveData()
     {
@@ -77,12 +99,12 @@ public class Test2 : MonoBehaviour
         }
     }
 
+    // 切换场景
     private void OnGUI()
     {
         //if (GUI.Button(new Rect(125, -125, 200, 60), "Turn to Scene1"))
         if (GUILayout.Button("Turn to Scene1"))
         {
-            //切换场景
             SceneManager.LoadScene("Scene1");
             Debug.Log("切换到场景1");
         }

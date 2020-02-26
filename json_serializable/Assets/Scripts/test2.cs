@@ -12,32 +12,40 @@ using LitJson;
 using System.IO;
 using UnityEngine.SceneManagement;
 
-
+// 存档脚本
 public class Test2 : MonoBehaviour
 {
-    Data data = new Data();
+    Data data = new Data();  // 声明数据对象的实例
     public Text[] Name;
     public Text itemtext;
     public Button[] Up;
 
+    // Start is called before the first frame update
+    void Start()
+    {
+        Init();
+    }
 
+    // UI显示
     void Init()
     {
-        Name[0].text = "等级: " + data.level.ToString();
+        Name[0].text = "等级: " + data.level.ToString();  // 显示等级
         Name[1].text = "金币: " + data.money.ToString();
 
-        Up[0].onClick.AddListener(() => { data.level++; });
+        Up[0].onClick.AddListener(() => { data.level++; }); // 点击加1
         Up[1].onClick.AddListener(() => { data.money++; });
 
-        string itemname = "";
+        string itemname = "";  // 显示道具名称
         foreach (var item in data.bagitems)
         {
             itemname += item.name + " ";
         }
         itemtext.text = itemname;
 
+
     }
 
+    // UI刷新
     private void Update()
     {
         Name[0].text = "等级: " + data.level.ToString();
@@ -50,29 +58,34 @@ public class Test2 : MonoBehaviour
         }
         itemtext.text = itemname;
 
+
     }
 
-    // Start is called before the first frame update
-    void Start()
-    {
-        Init();
-    }
-
+    // 点击后向背包列表增加一个物品
     public void GetItem()
     {
         data.bagitems.Add(new Item("长剑", Type.Weapon));
     }
+
+    private void OnDestroy()
+    {
+        SaveData();
+    }
+
     // 数据存档
     public void SaveData()
     {
-        // 数据转换
+
+        // 数据转换成json字符串
         string json = JsonMapper.ToJson(data);
 
         if (!File.Exists("data.json"))
+        {
             File.Create("data.json").Close();
-        Debug.Log("Create data.json");
+            Debug.Log("Create data.json");
+        }
 
-        // 转换后保存到文件
+        // 将Json字符串以文件流的方式写入并覆盖原Json文件
         using (StreamWriter sw= new StreamWriter(new FileStream("data.json", FileMode.Truncate)))
         {
             sw.Write(json);
@@ -86,8 +99,12 @@ public class Test2 : MonoBehaviour
     public void LoadData()
     {
         if (!File.Exists("data.json"))
-            return;
+        {
             Debug.Log("No File found !");
+            return;
+        }
+
+        // 将存档文件以文件流的方式读取并转换成json字符串，再转换成数据对象
 
         using (StreamReader sr = new StreamReader(new FileStream("data.json", FileMode.Open)))
         {

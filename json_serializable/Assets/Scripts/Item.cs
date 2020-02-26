@@ -8,6 +8,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
+// 定义道具类型枚举
 public enum Type
 {
     Weapon,

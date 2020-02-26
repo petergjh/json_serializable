@@ -67,7 +67,8 @@ public class Test2 : MonoBehaviour
         data.bagitems.Add(new Item("长剑", Type.Weapon));
     }
 
-    private void OnDestroy()
+    // 对象禁用时发起存档
+    private void OnDisable()
     {
         SaveData();
     }

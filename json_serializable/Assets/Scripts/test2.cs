@@ -11,6 +11,9 @@ using UnityEngine.UI;
 using LitJson;
 using System.IO;
 using UnityEngine.SceneManagement;
+using System.Security.Cryptography;
+
+
 
 // 存档脚本
 public class Test2 : MonoBehaviour
@@ -115,6 +118,12 @@ public class Test2 : MonoBehaviour
             Debug.Log("Load data successfully ! ");
 
         }
+    }
+
+    // Rijndael加密算法
+    private static string RijndaelEncrypt (string pString, string pKey)
+    {
+        RijndaelManaged rDel = new RijndaelManaged();
     }
 
     // 切换场景

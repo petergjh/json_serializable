@@ -18,10 +18,11 @@ using System.Security.Cryptography;
 // 存档脚本
 public class Test2 : MonoBehaviour
 {
-    Data data = new Data();  // 声明数据对象的实例
+    Data GameData = new Data();  // 声明数据对象的实例
     public Text[] Name;
     public Text itemtext;
     public Button[] Up;
+
 
     // Start is called before the first frame update
     void Start()
@@ -32,14 +33,14 @@ public class Test2 : MonoBehaviour
     // UI显示
     void Init()
     {
-        Name[0].text = "等级: " + data.level.ToString();  // 显示等级
-        Name[1].text = "金币: " + data.money.ToString();
+        Name[0].text = "等级: " + GameData.level.ToString();  // 显示等级
+        Name[1].text = "金币: " + GameData.money.ToString();
 
-        Up[0].onClick.AddListener(() => { data.level++; }); // 点击加1
-        Up[1].onClick.AddListener(() => { data.money++; });
+        Up[0].onClick.AddListener(() => { GameData.level++; }); // 点击加1
+        Up[1].onClick.AddListener(() => { GameData.money++; });
 
         string itemname = "";  // 显示道具名称
-        foreach (var item in data.bagitems)
+        foreach (var item in GameData.bagitems)
         {
             itemname += item.name + " ";
         }
@@ -51,11 +52,11 @@ public class Test2 : MonoBehaviour
     // UI刷新
     private void Update()
     {
-        Name[0].text = "等级: " + data.level.ToString();
-        Name[1].text = "金币: " + data.money.ToString();
+        Name[0].text = "等级: " + GameData.level.ToString();
+        Name[1].text = "金币: " + GameData.money.ToString();
 
         string itemname = "";
-        foreach (var item in data.bagitems)
+        foreach (var item in GameData.bagitems)
         {
             itemname += item.name + " ";
         }
@@ -67,7 +68,7 @@ public class Test2 : MonoBehaviour
     // 点击后向背包列表增加一个物品
     public void GetItem()
     {
-        data.bagitems.Add(new Item("长剑", Type.Weapon));
+        GameData.bagitems.Add(new Item("长剑", Type.Weapon));
     }
 
     // 对象禁用时发起存档
@@ -81,20 +82,20 @@ public class Test2 : MonoBehaviour
     {
 
         // 数据转换成json字符串
-        string json = JsonMapper.ToJson(data);
+        string json = JsonMapper.ToJson(GameData);
 
-        if (!File.Exists("data.json"))
+        if (!File.Exists("GameData.json"))
         {
-            File.Create("data.json").Close();
-            Debug.Log("Create data.json");
+            File.Create("GameData.json").Close();
+            Debug.Log("Create GameData.json");
         }
 
         // 将Json字符串以文件流的方式写入并覆盖原Json文件
-        using (StreamWriter sw= new StreamWriter(new FileStream("data.json", FileMode.Truncate)))
+        using (StreamWriter sw= new StreamWriter(new FileStream("GameData.json", FileMode.Truncate)))
         {
             sw.Write(json);
             sw.Close();
-            Debug.Log("Writen data to Json File successfully !");
+            Debug.Log("Writen GameData to Json File successfully !");
         }
         
     }
@@ -102,7 +103,7 @@ public class Test2 : MonoBehaviour
     //  加载存档
     public void LoadData()
     {
-        if (!File.Exists("data.json"))
+        if (!File.Exists("GameData.json"))
         {
             Debug.Log("No File found !");
             return;
@@ -110,18 +111,18 @@ public class Test2 : MonoBehaviour
 
         // 将存档文件以文件流的方式读取并转换成json字符串，再转换成数据对象
 
-        using (StreamReader sr = new StreamReader(new FileStream("data.json", FileMode.Open)))
+        using (StreamReader sr = new StreamReader(new FileStream("GameData.json", FileMode.Open)))
         {
             string json = sr.ReadLine();
-            data = JsonMapper.ToObject<Data>(json);
+            GameData = JsonMapper.ToObject<Data>(json);
             sr.Close();
-            Debug.Log("Load data successfully ! ");
+            Debug.Log("Load GameData successfully ! ");
 
         }
     }
 
     // Rijndael加密算法
-    private static string RijndaelEncrypt (string pString, string pKey)
+    private static void RijndaelEncrypt (string pString, string pKey)
     {
         RijndaelManaged rDel = new RijndaelManaged();
     }

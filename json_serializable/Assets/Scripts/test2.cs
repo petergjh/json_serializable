@@ -19,6 +19,7 @@ using System.Security.Cryptography;
 public class Test2 : MonoBehaviour
 {
     Data GameData = new Data();  // 声明数据对象的实例
+
     public Text[] Name;
     public Text itemtext;
     public Button[] Up;
@@ -81,8 +82,18 @@ public class Test2 : MonoBehaviour
     public void SaveData()
     {
 
+        var SaveAll = new Save
+        {
+            Save1 = GameData,
+            Save2 = GameData,
+            Save3 = GameData
+            
+        };
+        
+
         // 数据转换成json字符串
-        string json = JsonMapper.ToJson(GameData);
+        string json = JsonMapper.ToJson(SaveAll);
+        Debug.Log(SaveAll);
 
         if (!File.Exists("GameData.json"))
         {

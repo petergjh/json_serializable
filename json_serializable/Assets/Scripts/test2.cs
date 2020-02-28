@@ -19,6 +19,7 @@ using System.Security.Cryptography;
 public class Test2 : MonoBehaviour
 {
     Data GameData = new Data();  // 声明数据对象的实例
+    Save SaveAll = new Save();  // 声明存档对象的实例
 
     public Text[] Name;
     public Text itemtext;
@@ -78,31 +79,35 @@ public class Test2 : MonoBehaviour
         SaveData();
     }
 
+    // 存档一
+    public void SaveData1()
+    {
+        SaveData();
+        SaveAll.Save1 = GameData;
+    }
+
+    public void SaveData2()
+    {
+        SaveData();
+
+    }
     // 数据存档
     public void SaveData()
     {
-
-        var SaveAll = new Save
-        {
-            Save1 = GameData,
-            Save2 = GameData,
-            Save3 = GameData
             
-        };
-        
 
         // 数据转换成json字符串
         string json = JsonMapper.ToJson(SaveAll);
         Debug.Log(SaveAll);
 
-        if (!File.Exists("GameData.json"))
+        if (!File.Exists("GameAllData.json"))
         {
-            File.Create("GameData.json").Close();
+            File.Create("GameAllData.json").Close();
             Debug.Log("Create GameData.json");
         }
 
         // 将Json字符串以文件流的方式写入并覆盖原Json文件
-        using (StreamWriter sw= new StreamWriter(new FileStream("GameData.json", FileMode.Truncate)))
+        using (StreamWriter sw= new StreamWriter(new FileStream("GameAllData.json", FileMode.Truncate)))
         {
             sw.Write(json);
             sw.Close();
@@ -125,7 +130,7 @@ public class Test2 : MonoBehaviour
         using (StreamReader sr = new StreamReader(new FileStream("GameData.json", FileMode.Open)))
         {
             string json = sr.ReadLine();
-            GameData = JsonMapper.ToObject<Data>(json);
+            SaveAll = JsonMapper.ToObject<Data>(json);
             sr.Close();
             Debug.Log("Load GameData successfully ! ");
 

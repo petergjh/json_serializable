@@ -12,6 +12,7 @@ using LitJson;
 using System.IO;
 using UnityEngine.SceneManagement;
 using System.Security.Cryptography;
+using System;
 
 
 
@@ -19,12 +20,13 @@ using System.Security.Cryptography;
 public class Test2 : MonoBehaviour
 {
     Data GameData = new Data();  // 声明数据对象的实例
-    // Save SaveAll = new Save();  // 声明存档对象的实例
-    public static string SaveName = "Save0";
+    public static string SaveName = "Save0"; //  定义一个存档名称的全局变量
 
     public Text[] Name;
     public Text itemtext;
     public Button[] Up;
+    private string key;
+    private string SavePath;
 
 
     // Start is called before the first frame update
@@ -86,7 +88,7 @@ public class Test2 : MonoBehaviour
     private void OnDisable()
     {
         Debug.Log("对象禁用时发起存档");
-        SaveData();
+        SaveData(SavePath, key, GameData);
     }
 
     // 存档一
@@ -111,9 +113,10 @@ public class Test2 : MonoBehaviour
     }
 
     // 数据存档
-    public void SaveData()
-    {
-        string SavePath = SaveName.ToString() + ".json";
+    // public void SaveData()
+      public static void SaveData(string SavePath, string key, object GameData)
+      {
+        SavePath = SaveName.ToString() + ".json";
         if (!File.Exists(SavePath))
         {
             File.Create(SavePath).Close();
@@ -124,6 +127,8 @@ public class Test2 : MonoBehaviour
         // 数据转换成json字符串
         string JsonStr = JsonMapper.ToJson(GameData);
         Debug.LogFormat("游戏数据已转存成Json字符串:{0}", JsonStr);
+        JsonStr = RijndaelEncrypt(JsonStr, key);
+
 
         //        if (!File.Exists("GameAllData.json"))
         //        {
@@ -132,14 +137,17 @@ public class Test2 : MonoBehaviour
         //        }
 
         // 将Json字符串以文件流的方式写入并覆盖原Json文件
-        Debug.LogFormat("已成功存档到: {0}", SavePath);
-        {
             using (StreamWriter sw = new StreamWriter(new FileStream(SavePath, FileMode.Truncate)))
             {
                 sw.Write(JsonStr);
                 sw.Close();
+                Debug.LogFormat("已成功存档到: {0}", SavePath);
             }
-        } 
+      }
+
+    private static string RijndaelEncrypt(string jsonStr, string key)
+    {
+        throw new NotImplementedException();
     }
 
     //  加载存档
@@ -167,10 +175,10 @@ public class Test2 : MonoBehaviour
     }
 
     // Rijndael加密算法
-    private static void RijndaelEncrypt (string pString, string pKey)
-    {
-        RijndaelManaged rDel = new RijndaelManaged();
-    }
+//    private static void RijndaelEncrypt (string pString, string pKey)
+//    {
+//        RijndaelManaged rDel = new RijndaelManaged();
+//    }
 
     // 切换场景
     private void OnGUI()

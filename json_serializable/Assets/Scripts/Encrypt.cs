@@ -14,7 +14,7 @@ using System;
 public class Encrypt : MonoBehaviour
 {
     // Rijndael加密算法
-        private static string RijndaelEncrypt(string pString, string pKey)
+        public static string RijndaelEncrypt(string pString, string pKey)
         {
             byte[] keyArray = UTF8Encoding.UTF8.GetBytes(pKey);//密钥
             byte[] toEncryptArray = UTF8Encoding.UTF8.GetBytes(pString);//待加密明文数组

@@ -25,7 +25,7 @@ public class Test2 : MonoBehaviour
     public Text[] Name;
     public Text itemtext;
     public Button[] Up;
-    private string key;
+    private readonly string key = "12345678912345678912345678912345";
     private string SavePath;
 
 
@@ -88,7 +88,7 @@ public class Test2 : MonoBehaviour
     private void OnDisable()
     {
         Debug.Log("对象禁用时发起存档");
-        SaveData(SavePath, key, GameData);
+        SaveData();
     }
 
     // 存档一
@@ -114,41 +114,31 @@ public class Test2 : MonoBehaviour
 
     // 数据存档
     // public void SaveData()
-      public static void SaveData(string SavePath, string key, object GameData)
+    // string SavePath, string key, object GameData
+      public void SaveData()
       {
         SavePath = SaveName.ToString() + ".json";
         if (!File.Exists(SavePath))
         {
             File.Create(SavePath).Close();
-            Debug.Log("创建存档");
-            //Debug.Log("找不到存档文件");
-            //return;
+            Debug.LogFormat("创建存档: {0}", SavePath);
         }
+
         // 数据转换成json字符串
         string JsonStr = JsonMapper.ToJson(GameData);
-        Debug.LogFormat("游戏数据已转存成Json字符串:{0}", JsonStr);
-        JsonStr = RijndaelEncrypt(JsonStr, key);
-
-
-        //        if (!File.Exists("GameAllData.json"))
-        //        {
-        //            File.Create("GameAllData.json").Close();
-        //            Debug.Log("Create GameData.json");
-        //        }
+        Debug.LogFormat("游戏数据转存成Json字符串:{0}", JsonStr);
+        JsonStr = Encrypt.RijndaelEncrypt(JsonStr, key);
+        Debug.Log("加密Json字符串");
 
         // 将Json字符串以文件流的方式写入并覆盖原Json文件
             using (StreamWriter sw = new StreamWriter(new FileStream(SavePath, FileMode.Truncate)))
             {
                 sw.Write(JsonStr);
                 sw.Close();
-                Debug.LogFormat("已成功存档到: {0}", SavePath);
+                Debug.LogFormat("游戏数据已存档到: {0}", SavePath);
             }
       }
 
-    private static string RijndaelEncrypt(string jsonStr, string key)
-    {
-        throw new NotImplementedException();
-    }
 
     //  加载存档
     public void LoadData()
@@ -157,28 +147,23 @@ public class Test2 : MonoBehaviour
 
         if (!File.Exists(SavePath))
         {
-            File.Create(SavePath).Close();
-            Debug.LogFormat("创建存档：{0}", SavePath);
-            // Debug.Log("No path found !");
-            // return;
+            // File.Create(SavePath).Close();
+            // Debug.LogFormat("创建存档：{0}", SavePath);
+            SaveData();
         }
 
         // 将存档文件以文件流的方式读取并转换成json字符串，再转换成数据对象
         using (StreamReader sr = new StreamReader(new FileStream(SavePath, FileMode.Open)))
         {
             string json = sr.ReadLine();
+            json = Encrypt.RijndaelDecrypt(json, key);
             GameData = JsonMapper.ToObject<Data>(json);
             sr.Close();
-            Debug.Log("Load GameData successfully ! ");
+            Debug.Log("GameData Loaded! ");
 
         }
     }
 
-    // Rijndael加密算法
-//    private static void RijndaelEncrypt (string pString, string pKey)
-//    {
-//        RijndaelManaged rDel = new RijndaelManaged();
-//    }
 
     // 切换场景
     private void OnGUI()

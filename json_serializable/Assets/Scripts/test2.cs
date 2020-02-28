@@ -19,7 +19,8 @@ using System.Security.Cryptography;
 public class Test2 : MonoBehaviour
 {
     Data GameData = new Data();  // 声明数据对象的实例
-    Save SaveAll = new Save();  // 声明存档对象的实例
+    // Save SaveAll = new Save();  // 声明存档对象的实例
+    public static string SaveName = "Save0";
 
     public Text[] Name;
     public Text itemtext;
@@ -48,6 +49,13 @@ public class Test2 : MonoBehaviour
         }
         itemtext.text = itemname;
 
+//        if (!File.Exists("GameAllData.json"))
+//        {
+//            File.Create("GameAllData.json").Close();
+//            Debug.Log("Creat Save File.");
+//        }
+//
+
 
     }
 
@@ -73,64 +81,85 @@ public class Test2 : MonoBehaviour
         GameData.bagitems.Add(new Item("长剑", Type.Weapon));
     }
 
+
     // 对象禁用时发起存档
     private void OnDisable()
     {
+        Debug.Log("对象禁用时发起存档");
         SaveData();
     }
 
     // 存档一
-    public void SaveData1()
+    public void LoadSave1()
     {
-        SaveData();
-        SaveAll.Save1 = GameData;
+        SaveName = "Save1";
+        LoadData();
     }
 
-    public void SaveData2()
+    // 存档二
+    public void LoadSave2()
     {
-        SaveData();
-
+        SaveName = "Save2";
+        LoadData();
     }
+
+    // 存档三
+    public void LoadSave3()
+    {
+        SaveName = "Save3";
+        LoadData();
+    }
+
     // 数据存档
     public void SaveData()
     {
-            
-
-        // 数据转换成json字符串
-        string json = JsonMapper.ToJson(SaveAll);
-        Debug.Log(SaveAll);
-
-        if (!File.Exists("GameAllData.json"))
+        string SavePath = SaveName.ToString() + ".json";
+        if (!File.Exists(SavePath))
         {
-            File.Create("GameAllData.json").Close();
-            Debug.Log("Create GameData.json");
+            File.Create(SavePath).Close();
+            Debug.Log("创建存档");
+            //Debug.Log("找不到存档文件");
+            //return;
         }
+        // 数据转换成json字符串
+        string JsonStr = JsonMapper.ToJson(GameData);
+        Debug.LogFormat("游戏数据已转存成Json字符串:{0}", JsonStr);
+
+        //        if (!File.Exists("GameAllData.json"))
+        //        {
+        //            File.Create("GameAllData.json").Close();
+        //            Debug.Log("Create GameData.json");
+        //        }
 
         // 将Json字符串以文件流的方式写入并覆盖原Json文件
-        using (StreamWriter sw= new StreamWriter(new FileStream("GameAllData.json", FileMode.Truncate)))
+        Debug.LogFormat("已成功存档到: {0}", SavePath);
         {
-            sw.Write(json);
-            sw.Close();
-            Debug.Log("Writen GameData to Json File successfully !");
-        }
-        
+            using (StreamWriter sw = new StreamWriter(new FileStream(SavePath, FileMode.Truncate)))
+            {
+                sw.Write(JsonStr);
+                sw.Close();
+            }
+        } 
     }
 
     //  加载存档
     public void LoadData()
     {
-        if (!File.Exists("GameData.json"))
+        string SavePath = SaveName.ToString() + ".json";
+
+        if (!File.Exists(SavePath))
         {
-            Debug.Log("No File found !");
-            return;
+            File.Create(SavePath).Close();
+            Debug.LogFormat("创建存档：{0}", SavePath);
+            // Debug.Log("No path found !");
+            // return;
         }
 
         // 将存档文件以文件流的方式读取并转换成json字符串，再转换成数据对象
-
-        using (StreamReader sr = new StreamReader(new FileStream("GameData.json", FileMode.Open)))
+        using (StreamReader sr = new StreamReader(new FileStream(SavePath, FileMode.Open)))
         {
             string json = sr.ReadLine();
-            SaveAll = JsonMapper.ToObject<Data>(json);
+            GameData = JsonMapper.ToObject<Data>(json);
             sr.Close();
             Debug.Log("Load GameData successfully ! ");
 

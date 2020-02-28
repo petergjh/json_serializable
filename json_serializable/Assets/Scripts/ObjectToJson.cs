@@ -11,6 +11,26 @@ using LitJson;
 using UnityEngine.SceneManagement;
 using UnityEngine.UI;
 
+public class PetColor
+{
+    public int red;
+    public int green;
+    public int blue;
+
+}
+
+public class Pet
+{
+    public string name;
+    public int age;
+    public PetColor color;
+
+    public void Bark()
+    {
+
+    }
+}
+
 public class ObjectToJson: MonoBehaviour
 {
  
@@ -19,12 +39,18 @@ public class ObjectToJson: MonoBehaviour
     private object myArray;
     private object myArray2;
     private object myList;
- 
-     // Start is called before the first frame update
+    private int myStr;
+    private string mySave3;
+    private string myArray4;
+    private object save1;
+    private object save2;
+    private object save3;
+
+    // Start is called before the first frame update
     void Start()
     {
         myPet = JsonMapper.ToJson(new Pet());
-        Debug.LogFormat("测试将class实例转换为Json格式：{0},实例方法和未公开的属性不会被转化", myPet );
+        Debug.LogFormat("测试将class实例转换为Json格式：{0},实例方法和未公开的属性不会被转化", myPet);
 
         var petTom = new Pet();
         petTom.name = "Tom";
@@ -59,8 +85,41 @@ public class ObjectToJson: MonoBehaviour
         Debug.LogFormat("测试把Json字符串转为特定类的实例：{0}, {1}, {2}", myPetJerry, myPetJerry.name, myPetJerry.age);
 
 
+        string arrayStr = "[1,2,3,11,12,13]";
+        int myStr = JsonMapper.ToObject<int[]>(arrayStr)[3];
+        Debug.LogFormat("测试用泛型把Json转为字符串: {0}", myStr);
+
+
+//        使用泛型时 ToObject 的参数只能为字符串形式，而不能以JsonData 类型的变量作为参数
+//        不能将 List<int[]> 转换为交错数组
+//        var arrayStr3 = "['foo', 'baz'], ['bar']]";
+//        var myArray3 = JsonMapper.ToObject<string[][]>(arrayStr3);
+//        myArray4 = myArray3[1][0];
+//        Debug.LogFormat("测试用泛型把Json转为字符串{0}", myArray4);
+
+        var save = new JsonData();
+        save["name"] = "Third";
+        save["level"] = 3;
+        var mySave = save.ToJson();
+        Debug.LogFormat("测试JsonData字典实例{0}", mySave);
+
+
+        var SaveAll = new JsonData();
+        SaveAll.Add(save1);
+        SaveAll.Add(save2);
+        SaveAll.Add(save3);
+
+        var MySaveAll = SaveAll.ToJson();
+        Debug.LogFormat("测试Json数组实例{0}", MySaveAll);
+
+
+
+
     }
 
+
+
+    
     private void OnGUI()
     {
         if (GUILayout.Button("Turn to Scene2"))
@@ -72,22 +131,4 @@ public class ObjectToJson: MonoBehaviour
     }
 }
 
-public class Pet
-{
-    public string name;
-    public int age;
-    public PetColor color;
 
-    public void Bark()
-    {
-
-    }
-}
-
-public class PetColor
-{
-    public int r;
-    public int g;
-    public int b;
-
-}
